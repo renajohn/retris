@@ -1,0 +1,7 @@
+services:
+  web:
+    image: pierrezemb/gostatic
+    ports:
+      - "8080:8043"
+    volumes:
+      - ./:/srv/http:ro
