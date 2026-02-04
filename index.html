@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris - Game Boy Color Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="gameboy gameboy-color">
+        <div class="gameboy-header">
+            <div class="gameboy-title">TETRIS <span class="color-text">COLOR</span></div>
+        </div>
+        <div class="screen-container">
+            <div class="screen">
+                <div class="game-container">
+                    <div class="main-area">
+                        <canvas id="gameCanvas" width="200" height="400"></canvas>
+                    </div>
+                    <div class="side-panel">
+                        <div class="panel-section">
+                            <div class="panel-label">NEXT</div>
+                            <canvas id="nextCanvas" width="80" height="80"></canvas>
+                        </div>
+                        <div class="panel-section">
+                            <div class="panel-label">SCORE</div>
+                            <div id="score" class="panel-value">000000</div>
+                        </div>
+                        <div class="panel-section">
+                            <div class="panel-label">LEVEL</div>
+                            <div id="level" class="panel-value">01</div>
+                        </div>
+                        <div class="panel-section">
+                            <div class="panel-label">LINES</div>
+                            <div id="lines" class="panel-value">000</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Start Screen -->
+                <div id="startScreen" class="overlay">
+                    <div class="overlay-content">
+                        <h1 class="rainbow-title">TETRIS</h1>
+                        <p>Game Boy Color Edition</p>
+                        
+                        <div id="resumeSection" class="resume-section hidden">
+                            <p class="resume-info">Partie sauvegardée trouvée!</p>
+                            <button id="resumeGameBtn" class="resume-btn">REPRENDRE</button>
+                        </div>
+                        
+                        <button id="startBtn">NOUVELLE PARTIE</button>
+                        <button id="startLeaderboardBtn" class="secondary-btn">CLASSEMENT</button>
+                        <div class="controls-info">
+                            <p>← → : Déplacer</p>
+                            <p>↑ : Tourner</p>
+                            <p>↓ : Descente douce</p>
+                            <p>ENTRÉE : Hard drop</p>
+                            <p>ESPACE : Pause</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Difficulty Screen -->
+                <div id="difficultyScreen" class="overlay hidden">
+                    <div class="overlay-content difficulty-content">
+                        <h2>CHOISIS TON NIVEAU</h2>
+                        
+                        <div class="difficulty-cards">
+                            <button class="difficulty-card easy" data-diff="easy">
+                                <div class="diff-icon">😌</div>
+                                <div class="diff-text">
+                                    <div class="diff-name">EASY</div>
+                                    <div class="diff-desc">Vitesse normale</div>
+                                </div>
+                            </button>
+                            
+                            <button class="difficulty-card medium" data-diff="medium">
+                                <div class="diff-icon">😤</div>
+                                <div class="diff-text">
+                                    <div class="diff-name">MEDIUM</div>
+                                    <div class="diff-desc">30% plus rapide</div>
+                                </div>
+                            </button>
+                            
+                            <button class="difficulty-card hard" data-diff="violaine">
+                                <div class="diff-icon">🤯</div>
+                                <div class="diff-text">
+                                    <div class="diff-name">VIOLAINE</div>
+                                    <div class="diff-desc">50% plus rapide !</div>
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <button id="backToMenuBtn" class="back-btn">← RETOUR</button>
+                    </div>
+                </div>
+                
+                <!-- Pause Screen -->
+                <div id="pauseScreen" class="overlay hidden">
+                    <div class="overlay-content">
+                        <h2>PAUSE</h2>
+                        <button id="resumeBtn">CONTINUER</button>
+                    </div>
+                </div>
+                
+                <!-- Game Over Screen -->
+                <div id="gameOverScreen" class="overlay hidden">
+                    <div class="overlay-content game-over-content">
+                        <h2>GAME OVER</h2>
+                        <p class="final-score">Score: <span id="finalScore">0</span></p>
+                        
+                        <div id="scoreInputSection" class="score-input-section">
+                            <p id="highScoreMessage" class="high-score-message hidden">Nouveau record !</p>
+                            <input type="text" id="playerName" placeholder="Ton nom" maxlength="10" class="name-input">
+                            <button id="saveScoreBtn">ENREGISTRER</button>
+                        </div>
+                        
+                        <div id="scoreSavedMessage" class="score-saved hidden">
+                            <p>Score enregistré !</p>
+                        </div>
+                        
+                        <div class="game-over-leaderboard">
+                            <h3>TOP SCORES</h3>
+                            <div id="leaderboardList" class="leaderboard-list"></div>
+                        </div>
+                        
+                        <button id="restartBtn">REJOUER</button>
+                    </div>
+                </div>
+                
+                <!-- Leaderboard Screen -->
+                <div id="leaderboardScreen" class="overlay hidden">
+                    <div class="overlay-content leaderboard-content">
+                        <h2>CLASSEMENT</h2>
+                        <div id="leaderboardListFull" class="leaderboard-list"></div>
+                        <button id="closeLeaderboardBtn">FERMER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gameboy-controls">
+            <div class="dpad">
+                <button class="dpad-btn up" id="btnUp">▲</button>
+                <button class="dpad-btn left" id="btnLeft">◀</button>
+                <button class="dpad-btn right" id="btnRight">▶</button>
+                <button class="dpad-btn down" id="btnDown">▼</button>
+                <div class="dpad-center"></div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn" id="btnB">B</button>
+                <button class="action-btn" id="btnA">A</button>
+            </div>
+            <div class="menu-buttons">
+                <button class="menu-btn" id="btnSelect">SELECT</button>
+                <button class="menu-btn" id="btnStart">START</button>
+            </div>
+        </div>
+        <div class="speaker-grille">
+            <div class="grille-line"></div>
+            <div class="grille-line"></div>
+            <div class="grille-line"></div>
+            <div class="grille-line"></div>
+            <div class="grille-line"></div>
+            <div class="grille-line"></div>
+        </div>
+    </div>
+    <div class="music-toggle">
+        <button id="musicBtn">🔊 Musique</button>
+        <button id="viewLeaderboardBtn">🏆 Scores</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
