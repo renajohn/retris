@@ -131,10 +131,10 @@ body {
     background: rgba(26, 26, 46, 0.98);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     border-radius: 5px;
     z-index: 10;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .overlay.hidden {
@@ -145,8 +145,7 @@ body {
     text-align: center;
     color: #fff;
     padding: 15px;
-    max-height: 100%;
-    overflow-y: auto;
+    margin: auto 0; /* Centers vertically when content fits, scrollable from top when it overflows */
 }
 
 .overlay-content h1 {
@@ -424,8 +423,8 @@ body {
 }
 
 .game-over-leaderboard {
-    margin: 15px 0;
-    max-height: 150px;
+    margin: 10px 0;
+    max-height: 120px;
     overflow-y: auto;
 }
 

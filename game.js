@@ -219,6 +219,12 @@ function resumeGame() {
         return;
     }
     
+    // Cancel any existing game loop to prevent duplicates
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
     // Restore game state
     board = saveData.board;
     boardColors = saveData.boardColors;
@@ -280,6 +286,8 @@ let audioContext = null;
 let musicPlaying = false;
 let musicGain = null;
 let currentNoteTimeout = null;
+let musicSessionId = 0; // Singleton guard: each startMusic() gets a unique session
+let userMutedMusic = false; // Tracks if the user explicitly muted music
 
 // Korobeiniki (Tetris Theme) - simplified melody
 const TETRIS_MELODY = [
@@ -335,7 +343,7 @@ function initAudio() {
 }
 
 function playNote(frequency, duration, time) {
-    if (!audioContext || frequency === 0) return;
+    if (!audioContext || !musicGain || frequency === 0) return;
     
     const oscillator = audioContext.createOscillator();
     const noteGain = audioContext.createGain();
@@ -355,7 +363,9 @@ function playNote(frequency, duration, time) {
 
 let melodyIndex = 0;
 
-function playMelody() {
+function playMelody(sessionId) {
+    // Singleton guard: bail out if this callback belongs to a stale session
+    if (sessionId !== musicSessionId) return;
     if (!musicPlaying || !audioContext) return;
     
     const note = TETRIS_MELODY[melodyIndex];
@@ -366,34 +376,74 @@ function playMelody() {
     }
     
     melodyIndex = (melodyIndex + 1) % TETRIS_MELODY.length;
-    currentNoteTimeout = setTimeout(playMelody, note.duration);
+    currentNoteTimeout = setTimeout(() => playMelody(sessionId), note.duration);
 }
 
 function startMusic() {
+    // Don't start music if the user explicitly muted it
+    if (userMutedMusic) return;
+    
+    // Kill any previous session completely
+    stopMusicInternal();
+    
     initAudio();
-    if (audioContext.state === 'suspended') {
-        audioContext.resume();
-    }
+    
+    // Create a fresh gain node so new notes go through a clean path.
+    musicGain = audioContext.createGain();
+    musicGain.gain.value = 0.15;
+    musicGain.connect(audioContext.destination);
+    
     musicPlaying = true;
     melodyIndex = 0;
-    playMelody();
+    
+    const mySession = musicSessionId;
+    
+    // Wait for AudioContext to be running before playing any notes.
+    // Playing on a suspended context queues oscillators that all fire at once on resume.
+    if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+            if (musicSessionId === mySession && musicPlaying) {
+                playMelody(mySession);
+            }
+        });
+    } else {
+        playMelody(mySession);
+    }
+    
     document.getElementById('musicBtn').textContent = '🔊 Musique';
     document.getElementById('musicBtn').classList.remove('muted');
 }
 
-function stopMusic() {
+// Internal stop that silences everything without updating UI
+function stopMusicInternal() {
     musicPlaying = false;
+    musicSessionId++;
     if (currentNoteTimeout) {
         clearTimeout(currentNoteTimeout);
+        currentNoteTimeout = null;
     }
+    // Disconnect gain node to immediately silence any in-flight oscillators
+    if (musicGain && audioContext) {
+        musicGain.disconnect();
+        musicGain = null;
+    }
+}
+
+function stopMusic() {
+    stopMusicInternal();
     document.getElementById('musicBtn').textContent = '🔇 Musique';
     document.getElementById('musicBtn').classList.add('muted');
 }
 
 function toggleMusic() {
+    // Only allow toggling music when a game is active
+    if (!gameRunning) return;
+    
     if (musicPlaying) {
+        userMutedMusic = true;
         stopMusic();
     } else {
+        userMutedMusic = false;
         startMusic();
     }
 }
@@ -1212,6 +1262,15 @@ function updateDisplay() {
 // ===== GAME FLOW =====
 
 function startGame(startingLevel = 1) {
+    // Cancel any existing game loop to prevent duplicates
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
+    // Reset music mute preference on new game
+    userMutedMusic = false;
+    
     // Clear any saved game when starting new
     clearSavedGame();
     
@@ -1246,6 +1305,11 @@ function pauseGame() {
     gamePaused = !gamePaused;
     
     if (gamePaused) {
+        // Cancel animation frame when pausing
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
         pauseScreen.classList.remove('hidden');
         stopMusic();
     } else {
@@ -1258,6 +1322,13 @@ function pauseGame() {
 
 function gameOver() {
     gameRunning = false;
+    
+    // Cancel animation frame
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
     stopMusic();
     playSound('gameover');
     
@@ -1387,6 +1458,8 @@ const difficultyScreen = document.getElementById('difficultyScreen');
 
 function showDifficultyScreen() {
     startScreen.classList.add('hidden');
+    gameOverScreen.classList.add('hidden');
+    leaderboardScreen.classList.add('hidden');
     difficultyScreen.classList.remove('hidden');
 }
 
@@ -1428,6 +1501,7 @@ startLeaderboardBtn.addEventListener('click', () => {
 // Handle Enter key in name input
 nameInput.addEventListener('keydown', (e) => {
     if (e.code === 'Enter') {
+        e.stopPropagation(); // Prevent Enter from bubbling to document handler
         handleSaveScore();
     }
 });
