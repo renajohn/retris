@@ -9,8 +9,8 @@ const nextCtx = nextCanvas.getContext('2d');
 // Game constants
 const COLS = 10;
 const ROWS = 20;
-const BLOCK_SIZE = 20;
-const NEXT_BLOCK_SIZE = 16;
+const BLOCK_SIZE = 30;
+const NEXT_BLOCK_SIZE = 24;
 
 // Game Boy Color palette - authentic GBC Tetris colors
 const PIECE_COLORS = {
@@ -1544,3 +1544,27 @@ checkSavedGame();
 document.getElementById('resumeGameBtn').addEventListener('click', () => {
     resumeGame();
 });
+
+// ===== RESPONSIVE SCALING =====
+function scaleGameboy() {
+    const gameboy = document.querySelector('.gameboy');
+    if (!gameboy) return;
+    
+    const padding = 20; // px breathing room on each side
+    const availW = window.innerWidth - padding * 2;
+    const availH = window.innerHeight - padding * 2;
+    
+    // Measure the gameboy's natural (unscaled) size
+    gameboy.style.transform = 'none';
+    const naturalW = gameboy.offsetWidth;
+    const naturalH = gameboy.offsetHeight;
+    
+    const scale = Math.min(1.0, availW / naturalW, availH / naturalH);
+    
+    gameboy.style.transform = `scale(${scale})`;
+    gameboy.style.transformOrigin = 'top center';
+}
+
+scaleGameboy();
+window.addEventListener('resize', scaleGameboy);
+window.addEventListener('orientationchange', () => setTimeout(scaleGameboy, 100));

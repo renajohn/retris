@@ -8,11 +8,12 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     font-family: 'Courier New', monospace;
     padding: 20px;
+    overflow-x: hidden;
 }
 
 /* Game Boy Color Style */
@@ -21,25 +22,26 @@ body {
 }
 
 .gameboy {
-    border-radius: 20px 20px 60px 20px;
-    padding: 20px;
+    border-radius: 24px 24px 70px 24px;
+    padding: 24px;
     box-shadow: 
         0 10px 30px rgba(0, 0, 0, 0.5),
         inset 0 2px 0 rgba(255, 255, 255, 0.3),
         inset 0 -2px 0 rgba(0, 0, 0, 0.2);
     position: relative;
+    /* transform is set by JS scaleGameboy() */
 }
 
 .gameboy-header {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .gameboy-title {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;
     color: #fff;
-    letter-spacing: 4px;
+    letter-spacing: 6px;
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
 }
 
@@ -53,8 +55,8 @@ body {
 
 .screen-container {
     background: #2a2a2a;
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 12px;
+    padding: 16px;
     box-shadow: 
         inset 0 3px 10px rgba(0, 0, 0, 0.5),
         0 2px 0 rgba(255, 255, 255, 0.1);
@@ -62,15 +64,15 @@ body {
 
 .screen {
     background: #1a1a2e;
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 6px;
+    padding: 12px;
     position: relative;
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 .game-container {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .main-area {
@@ -87,27 +89,28 @@ body {
 .side-panel {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    min-width: 90px;
+    gap: 12px;
+    min-width: 130px;
 }
 
 .panel-section {
     background: #0f0f1a;
     border: 2px solid #3a3a5a;
-    padding: 5px;
-    border-radius: 3px;
+    padding: 8px;
+    border-radius: 4px;
 }
 
 .panel-label {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: bold;
     color: #888;
     text-align: center;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
+    letter-spacing: 2px;
 }
 
 .panel-value {
-    font-size: 14px;
+    font-size: 20px;
     font-weight: bold;
     color: #00ff88;
     text-align: center;
@@ -132,7 +135,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    border-radius: 5px;
+    border-radius: 6px;
     z-index: 10;
     overflow-y: auto;
 }
@@ -144,13 +147,13 @@ body {
 .overlay-content {
     text-align: center;
     color: #fff;
-    padding: 15px;
-    margin: auto 0; /* Centers vertically when content fits, scrollable from top when it overflows */
+    padding: 20px;
+    margin: auto 0;
 }
 
 .overlay-content h1 {
-    font-size: 32px;
-    margin-bottom: 10px;
+    font-size: 42px;
+    margin-bottom: 12px;
     text-shadow: 2px 2px 0 #4a3f6b;
 }
 
@@ -169,20 +172,20 @@ body {
 }
 
 .overlay-content h2 {
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 28px;
+    margin-bottom: 18px;
     color: #00ff88;
 }
 
 .overlay-content h3 {
-    font-size: 14px;
+    font-size: 16px;
     margin: 15px 0 10px;
     color: #ffd93d;
 }
 
 .overlay-content p {
-    font-size: 12px;
-    margin-bottom: 10px;
+    font-size: 14px;
+    margin-bottom: 12px;
     color: #ccc;
 }
 
@@ -190,14 +193,14 @@ body {
     background: linear-gradient(145deg, #4d96ff, #3a75cc);
     color: #fff;
     border: none;
-    padding: 10px 30px;
-    font-size: 14px;
+    padding: 14px 36px;
+    font-size: 16px;
     font-family: 'Courier New', monospace;
     font-weight: bold;
     cursor: pointer;
-    margin: 5px;
+    margin: 6px;
     transition: all 0.1s;
-    border-radius: 5px;
+    border-radius: 6px;
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
@@ -229,7 +232,7 @@ body {
 /* Difficulty Screen */
 .difficulty-content {
     width: 100%;
-    max-width: 300px;
+    max-width: 400px;
     overflow: hidden;
 }
 
@@ -238,30 +241,31 @@ body {
 }
 
 .difficulty-content h2 {
-    margin-bottom: 12px;
-    font-size: 14px;
+    margin-bottom: 14px;
+    font-size: 18px;
     color: #ffd93d;
 }
 
 .difficulty-cards {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
 }
 
 .difficulty-card {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 10px 15px;
+    padding: 14px 18px;
     background: #2a3a4e;
     border: 2px solid #3a3a5e;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s;
     font-family: 'Courier New', monospace;
-    gap: 12px;
+    gap: 14px;
+    color: #fff;
 }
 
 .difficulty-card:hover {
@@ -296,7 +300,7 @@ body {
 }
 
 .diff-icon {
-    font-size: 24px;
+    font-size: 30px;
     flex-shrink: 0;
 }
 
@@ -308,7 +312,7 @@ body {
 }
 
 .diff-name {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;
     text-shadow: 0 0 10px currentColor;
 }
@@ -318,7 +322,7 @@ body {
 .difficulty-card.hard .diff-name { color: #ff6b6b; }
 
 .diff-desc {
-    font-size: 10px;
+    font-size: 12px;
     color: #aaa;
 }
 
@@ -326,9 +330,9 @@ body {
     background: transparent !important;
     border: 1px solid #666 !important;
     color: #888 !important;
-    font-size: 10px !important;
-    padding: 6px 15px !important;
-    margin-top: 5px !important;
+    font-size: 12px !important;
+    padding: 8px 18px !important;
+    margin-top: 6px !important;
 }
 
 .back-btn:hover {
@@ -339,7 +343,7 @@ body {
 
 .resume-info {
     color: #6bcb77 !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
     margin-bottom: 10px !important;
 }
 
@@ -356,7 +360,7 @@ body {
 
 .controls-info {
     margin-top: 20px;
-    font-size: 10px;
+    font-size: 12px;
     color: #888;
 }
 
@@ -367,11 +371,11 @@ body {
 
 /* Leaderboard Styles */
 .game-over-content {
-    max-width: 280px;
+    max-width: 380px;
 }
 
 .final-score {
-    font-size: 16px !important;
+    font-size: 20px !important;
     color: #00ff88 !important;
     margin-bottom: 15px !important;
 }
@@ -382,7 +386,7 @@ body {
 
 .high-score-message {
     color: #ffd93d !important;
-    font-size: 14px !important;
+    font-size: 16px !important;
     font-weight: bold;
     animation: pulse 1s infinite;
 }
@@ -396,13 +400,13 @@ body {
     background: #2a2a4e;
     border: 2px solid #4d96ff;
     color: #fff;
-    padding: 8px 15px;
-    font-size: 14px;
+    padding: 10px 18px;
+    font-size: 16px;
     font-family: 'Courier New', monospace;
     text-transform: uppercase;
-    width: 150px;
+    width: 180px;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 6px;
     margin-bottom: 10px;
 }
 
@@ -424,12 +428,12 @@ body {
 
 .game-over-leaderboard {
     margin: 10px 0;
-    max-height: 120px;
+    max-height: 150px;
     overflow-y: auto;
 }
 
 .leaderboard-content {
-    width: 280px;
+    width: 350px;
 }
 
 .leaderboard-list {
@@ -437,7 +441,7 @@ body {
     border: 2px solid #3a3a5a;
     border-radius: 5px;
     padding: 10px;
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
 }
 
@@ -445,9 +449,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #2a2a4e;
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .leaderboard-entry:last-child {
@@ -459,7 +463,7 @@ body {
 }
 
 .leaderboard-entry .rank {
-    width: 25px;
+    width: 30px;
     text-align: left;
 }
 
@@ -477,7 +481,7 @@ body {
 
 .leaderboard-empty {
     color: #666;
-    font-size: 11px;
+    font-size: 13px;
     padding: 10px;
 }
 
@@ -486,24 +490,24 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 10px;
-    margin-top: 10px;
+    padding: 24px 16px;
+    margin-top: 12px;
 }
 
 .dpad {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
 }
 
 .dpad-btn {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 38px;
+    height: 38px;
     background: #2a2a2a;
     border: none;
     color: #1a1a1a;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -511,6 +515,8 @@ body {
     box-shadow: 
         0 3px 0 #1a1a1a,
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .dpad-btn:active {
@@ -520,56 +526,58 @@ body {
 
 .dpad-btn.up {
     top: 0;
-    left: 35px;
-    border-radius: 5px 5px 0 0;
+    left: 41px;
+    border-radius: 6px 6px 0 0;
 }
 
 .dpad-btn.down {
     bottom: 0;
-    left: 35px;
-    border-radius: 0 0 5px 5px;
+    left: 41px;
+    border-radius: 0 0 6px 6px;
 }
 
 .dpad-btn.left {
     left: 0;
-    top: 35px;
-    border-radius: 5px 0 0 5px;
+    top: 41px;
+    border-radius: 6px 0 0 6px;
 }
 
 .dpad-btn.right {
     right: 0;
-    top: 35px;
-    border-radius: 0 5px 5px 0;
+    top: 41px;
+    border-radius: 0 6px 6px 0;
 }
 
 .dpad-center {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 38px;
+    height: 38px;
     background: #2a2a2a;
-    top: 35px;
-    left: 35px;
+    top: 41px;
+    left: 41px;
 }
 
 .action-buttons {
     display: flex;
-    gap: 15px;
+    gap: 18px;
     transform: rotate(-25deg);
 }
 
 .action-btn {
-    width: 45px;
-    height: 45px;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
     background: linear-gradient(145deg, #cc66ff, #9933cc);
     border: none;
     color: #fff;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 
         0 4px 0 #662299,
         inset 0 2px 0 rgba(255, 255, 255, 0.2);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .action-btn:active {
@@ -579,23 +587,25 @@ body {
 
 .menu-buttons {
     position: absolute;
-    bottom: 80px;
+    bottom: 90px;
     left: 50%;
     transform: translateX(-50%) rotate(-25deg);
     display: flex;
-    gap: 20px;
+    gap: 24px;
 }
 
 .menu-btn {
     background: #4a4a4a;
     border: none;
-    padding: 5px 15px;
-    font-size: 8px;
+    padding: 7px 18px;
+    font-size: 10px;
     font-weight: bold;
     color: #ccc;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     box-shadow: 0 2px 0 #2a2a2a;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .menu-btn:active {
@@ -605,16 +615,16 @@ body {
 
 .speaker-grille {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: 24px;
+    right: 24px;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     transform: rotate(-25deg);
 }
 
 .grille-line {
-    width: 40px;
+    width: 48px;
     height: 3px;
     background: #3a3a5a;
     border-radius: 2px;
@@ -627,6 +637,7 @@ body {
     right: 20px;
     display: flex;
     gap: 10px;
+    z-index: 100;
 }
 
 #musicBtn, #viewLeaderboardBtn {
@@ -634,10 +645,11 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
     padding: 10px 15px;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     border-radius: 5px;
     transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #musicBtn:hover, #viewLeaderboardBtn:hover {
@@ -648,21 +660,27 @@ body {
     opacity: 0.5;
 }
 
-/* Responsive */
-@media (max-width: 450px) {
-    .gameboy {
-        transform: scale(0.8);
-        transform-origin: center;
+/* Hide controls info on touch devices (they use Game Boy buttons) */
+@media (hover: none) and (pointer: coarse) {
+    .controls-info {
+        display: none;
+    }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+    body {
+        padding: 10px;
     }
     
     .music-toggle {
-        top: 10px;
-        right: 10px;
+        top: 8px;
+        right: 8px;
     }
     
     #musicBtn, #viewLeaderboardBtn {
         padding: 8px 10px;
-        font-size: 10px;
+        font-size: 11px;
     }
 }
 
@@ -670,20 +688,20 @@ body {
 .screen::before {
     content: '';
     position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
     background: 
         repeating-linear-gradient(
             0deg,
             transparent,
-            transparent 2px,
-            rgba(0, 0, 0, 0.1) 2px,
-            rgba(0, 0, 0, 0.1) 4px
+            transparent 3px,
+            rgba(0, 0, 0, 0.08) 3px,
+            rgba(0, 0, 0, 0.08) 6px
         );
     pointer-events: none;
-    border-radius: 5px;
+    border-radius: 6px;
     z-index: 5;
 }
 
