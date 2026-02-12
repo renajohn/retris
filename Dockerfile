@@ -4,4 +4,4 @@ FROM scratch
 COPY --from=server /goStatic /goStatic
 COPY index.html style.css game.js /srv/http/
 ENTRYPOINT ["/goStatic"]
-EXPOSE 8043
+EXPOSE 8042
