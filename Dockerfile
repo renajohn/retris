@@ -1,7 +1,3 @@
-FROM pierrezemb/gostatic:latest AS server
-
-FROM scratch
-COPY --from=server /goStatic /goStatic
-COPY index.html style.css game.js /srv/http/
-ENTRYPOINT ["/goStatic"]
-EXPOSE 8042
+FROM nginx:alpine
+COPY index.html style.css game.js /usr/share/nginx/html/
+EXPOSE 80

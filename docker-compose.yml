@@ -3,4 +3,4 @@ services:
     build: .
     image: ghcr.io/renajohn/retris:latest
     ports:
-      - "8042:8042"
+      - "8042:80"
