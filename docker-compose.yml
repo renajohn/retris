@@ -1,7 +1,6 @@
 services:
   web:
-    image: pierrezemb/gostatic
+    build: .
+    image: ghcr.io/renajohn/retris:latest
     ports:
-      - "8080:8043"
-    volumes:
-      - ./:/srv/http:ro
+      - "8042:8042"
