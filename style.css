@@ -2,6 +2,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    touch-action: manipulation;
 }
 
 body {
@@ -82,6 +87,7 @@ body {
 #gameCanvas {
     display: block;
     image-rendering: pixelated;
+    touch-action: none;
 }
 
 .side-panel {
@@ -492,23 +498,26 @@ body {
 
 .dpad {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
 }
 
 .dpad-btn {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background: #2a2a2a;
     border: none;
     color: #1a1a1a;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow:
         0 3px 0 #1a1a1a,
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
@@ -520,35 +529,35 @@ body {
 
 .dpad-btn.up {
     top: 0;
-    left: 35px;
+    left: 40px;
     border-radius: 5px 5px 0 0;
 }
 
 .dpad-btn.down {
     bottom: 0;
-    left: 35px;
+    left: 40px;
     border-radius: 0 0 5px 5px;
 }
 
 .dpad-btn.left {
     left: 0;
-    top: 35px;
+    top: 40px;
     border-radius: 5px 0 0 5px;
 }
 
 .dpad-btn.right {
     right: 0;
-    top: 35px;
+    top: 40px;
     border-radius: 0 5px 5px 0;
 }
 
 .dpad-center {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background: #2a2a2a;
-    top: 35px;
-    left: 35px;
+    top: 40px;
+    left: 40px;
 }
 
 .action-buttons {
@@ -558,16 +567,19 @@ body {
 }
 
 .action-btn {
-    width: 45px;
-    height: 45px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background: linear-gradient(145deg, #cc66ff, #9933cc);
     border: none;
     color: #fff;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow:
         0 4px 0 #662299,
         inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
@@ -579,8 +591,8 @@ body {
 
 .menu-buttons {
     position: absolute;
-    bottom: 80px;
-    left: 50%;
+    bottom: 120px;
+    left: 60%;
     transform: translateX(-50%) rotate(-25deg);
     display: flex;
     gap: 20px;
@@ -595,6 +607,9 @@ body {
     color: #ccc;
     border-radius: 10px;
     cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
     box-shadow: 0 2px 0 #2a2a2a;
 }
 

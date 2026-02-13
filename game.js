@@ -1432,26 +1432,139 @@ function canControl() {
     return gameRunning && !gamePaused && !isClearing && currentPiece;
 }
 
-document.getElementById('btnUp').addEventListener('click', () => { if (canControl()) { rotate(); draw(); } });
-document.getElementById('btnDown').addEventListener('click', () => { 
-    if (canControl()) { 
+// --- Pointer-based hold-to-repeat for D-pad ---
+function setupRepeatButton(id, action, { repeats = true } = {}) {
+    const btn = document.getElementById(id);
+    let repeatTimer = null;
+    let repeatInterval = null;
+
+    function startRepeat(e) {
+        e.preventDefault();
+        action();
+        if (!repeats) return;
+        repeatTimer = setTimeout(() => {
+            repeatInterval = setInterval(() => { action(); }, 80);
+        }, 200);
+    }
+
+    function stopRepeat(e) {
+        if (e) e.preventDefault();
+        clearTimeout(repeatTimer);
+        clearInterval(repeatInterval);
+        repeatTimer = null;
+        repeatInterval = null;
+    }
+
+    btn.addEventListener('pointerdown', startRepeat);
+    btn.addEventListener('pointerup', stopRepeat);
+    btn.addEventListener('pointerleave', stopRepeat);
+    btn.addEventListener('pointercancel', stopRepeat);
+    // Prevent context menu on long press
+    btn.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
+setupRepeatButton('btnLeft', () => { if (canControl()) { moveLeft(); draw(); } });
+setupRepeatButton('btnRight', () => { if (canControl()) { moveRight(); draw(); } });
+setupRepeatButton('btnDown', () => {
+    if (canControl()) {
         if (moveDown()) { score += 1; updateDisplay(); }
         lastDrop = performance.now();
         draw();
     }
 });
-document.getElementById('btnLeft').addEventListener('click', () => { if (canControl()) { moveLeft(); draw(); } });
-document.getElementById('btnRight').addEventListener('click', () => { if (canControl()) { moveRight(); draw(); } });
-document.getElementById('btnA').addEventListener('click', () => { if (canControl()) { rotate(); draw(); } });
-document.getElementById('btnB').addEventListener('click', () => { if (canControl()) { hardDrop(); } });
-document.getElementById('btnStart').addEventListener('click', () => {
-    if (!gameRunning) {
-        startGame();
-    } else {
-        pauseGame();
-    }
+setupRepeatButton('btnUp', () => { if (canControl()) { rotate(); draw(); } }, { repeats: false });
+setupRepeatButton('btnA', () => { if (canControl()) { rotate(); draw(); } }, { repeats: false });
+setupRepeatButton('btnB', () => { if (canControl()) { hardDrop(); } }, { repeats: false });
+
+document.getElementById('btnStart').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (!gameRunning) { startGame(); } else { pauseGame(); }
 });
-document.getElementById('btnSelect').addEventListener('click', toggleMusic);
+document.getElementById('btnStart').addEventListener('contextmenu', (e) => e.preventDefault());
+
+document.getElementById('btnSelect').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    toggleMusic();
+});
+document.getElementById('btnSelect').addEventListener('contextmenu', (e) => e.preventDefault());
+
+// --- Swipe / tap gestures on game canvas ---
+(function setupCanvasGestures() {
+    const canvas = document.getElementById('gameCanvas');
+    let touchStartX = null;
+    let touchStartY = null;
+    let touchStartTime = 0;
+    let swipeHandled = false;
+
+    const SWIPE_THRESHOLD = 30;   // min px to count as swipe
+    const TAP_THRESHOLD = 15;     // max px movement for a tap
+    const SWIPE_DOWN_THRESHOLD = 50; // longer threshold for hard drop
+
+    canvas.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        canvas.setPointerCapture(e.pointerId);
+        touchStartX = e.clientX;
+        touchStartY = e.clientY;
+        touchStartTime = Date.now();
+        swipeHandled = false;
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+        if (touchStartX === null) return;
+        if (!canControl()) return;
+        e.preventDefault();
+
+        const dx = e.clientX - touchStartX;
+        const dy = e.clientY - touchStartY;
+
+        // Horizontal swipe (repeating: each threshold crossed moves one cell)
+        if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0) { moveRight(); } else { moveLeft(); }
+            draw();
+            touchStartX = e.clientX;  // reset origin so continued drag = more moves
+            swipeHandled = true;
+        }
+        // Downward swipe for soft drop
+        if (dy > SWIPE_THRESHOLD && dy > Math.abs(dx)) {
+            if (moveDown()) { score += 1; updateDisplay(); }
+            lastDrop = performance.now();
+            draw();
+            touchStartY = e.clientY;
+            swipeHandled = true;
+        }
+    });
+
+    canvas.addEventListener('pointerup', (e) => {
+        if (touchStartX === null) return;
+        e.preventDefault();
+
+        const dx = e.clientX - touchStartX;
+        const dy = e.clientY - touchStartY;
+        const elapsed = Date.now() - touchStartTime;
+
+        if (!swipeHandled && canControl()) {
+            // Quick upward swipe = hard drop
+            if (dy < -SWIPE_DOWN_THRESHOLD && Math.abs(dy) > Math.abs(dx)) {
+                hardDrop();
+            }
+            // Tap = rotate
+            else if (Math.abs(dx) < TAP_THRESHOLD && Math.abs(dy) < TAP_THRESHOLD && elapsed < 300) {
+                rotate();
+                draw();
+            }
+        }
+
+        touchStartX = null;
+        touchStartY = null;
+    });
+
+    canvas.addEventListener('pointercancel', () => {
+        touchStartX = null;
+        touchStartY = null;
+    });
+
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+})();
 
 // Difficulty screen
 const difficultyScreen = document.getElementById('difficultyScreen');
