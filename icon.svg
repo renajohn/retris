@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#2c003e"/>
+  <!-- T-piece -->
+  <rect x="136" y="96" width="80" height="80" rx="8" fill="#e74c3c"/>
+  <rect x="216" y="96" width="80" height="80" rx="8" fill="#e74c3c"/>
+  <rect x="296" y="96" width="80" height="80" rx="8" fill="#e74c3c"/>
+  <rect x="216" y="176" width="80" height="80" rx="8" fill="#e74c3c"/>
+  <!-- L-piece -->
+  <rect x="56" y="256" width="80" height="80" rx="8" fill="#3498db"/>
+  <rect x="56" y="336" width="80" height="80" rx="8" fill="#3498db"/>
+  <rect x="136" y="336" width="80" height="80" rx="8" fill="#3498db"/>
+  <rect x="216" y="336" width="80" height="80" rx="8" fill="#3498db"/>
+  <!-- S-piece -->
+  <rect x="296" y="256" width="80" height="80" rx="8" fill="#2ecc71"/>
+  <rect x="376" y="256" width="80" height="80" rx="8" fill="#2ecc71"/>
+  <rect x="216" y="336" width="80" height="80" rx="8" fill="#2ecc71"/>
+  <rect x="296" y="336" width="80" height="80" rx="8" fill="#2ecc71"/>
+</svg>
