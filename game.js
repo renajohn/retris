@@ -340,7 +340,23 @@ function initAudio() {
         musicGain.gain.value = 0.15;
         musicGain.connect(audioContext.destination);
     }
+    // iOS Safari requires resume() from a user gesture; call it every time
+    // to ensure the context is running.
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
 }
+
+// Eagerly unlock AudioContext on first user interaction (needed for iOS Safari)
+function unlockAudio() {
+    initAudio();
+    document.removeEventListener('touchstart', unlockAudio, true);
+    document.removeEventListener('touchend', unlockAudio, true);
+    document.removeEventListener('click', unlockAudio, true);
+}
+document.addEventListener('touchstart', unlockAudio, true);
+document.addEventListener('touchend', unlockAudio, true);
+document.addEventListener('click', unlockAudio, true);
 
 function playNote(frequency, duration, time) {
     if (!audioContext || !musicGain || frequency === 0) return;
