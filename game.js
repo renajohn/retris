@@ -1533,11 +1533,13 @@ document.getElementById('btnSelect').addEventListener('contextmenu', (e) => e.pr
         const dx = e.clientX - touchStartX;
         const dy = e.clientY - touchStartY;
 
-        // Horizontal swipe (repeating: each threshold crossed moves one cell)
+        // Horizontal swipe (move one cell per threshold crossed)
         if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0) { moveRight(); } else { moveLeft(); }
+            const steps = Math.floor(Math.abs(dx) / SWIPE_THRESHOLD);
+            const moveFn = dx > 0 ? moveRight : moveLeft;
+            for (let i = 0; i < steps; i++) { moveFn(); }
             draw();
-            touchStartX = e.clientX;  // reset origin so continued drag = more moves
+            touchStartX += (dx > 0 ? 1 : -1) * steps * SWIPE_THRESHOLD;
             touchStartY = e.clientY;  // reset Y to prevent accidental soft drop
             swipeHandled = true;
         }

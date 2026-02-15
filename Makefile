@@ -1,7 +1,10 @@
 IMAGE := ghcr.io/renajohn/retris
 TAG   := $(or $(TAG),latest)
 
-.PHONY: build push login
+.PHONY: setup build push login
+
+setup:
+	git config core.hooksPath hooks
 
 build:
 	docker build -t $(IMAGE):$(TAG) .
