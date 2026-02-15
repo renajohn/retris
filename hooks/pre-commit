@@ -1,13 +1,12 @@
 #!/bin/sh
-# Auto-update CACHE_NAME in sw.js with the short commit hash before push
-HASH=$(git rev-parse --short HEAD)
+# Auto-update CACHE_NAME in sw.js with a content hash for cache busting
+HASH=$(cat index.html style.css game.js | shasum | cut -c1-7)
 CURRENT=$(grep "^const CACHE_NAME" sw.js)
 
-# Only amend if the hash changed
+# Only update if the hash changed
 if echo "$CURRENT" | grep -q "$HASH"; then
   exit 0
 fi
 
 sed -i '' "s/^const CACHE_NAME = .*/const CACHE_NAME = 'retris-${HASH}';/" sw.js
 git add sw.js
-git commit --amend --no-edit

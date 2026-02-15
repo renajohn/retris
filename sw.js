@@ -1,4 +1,4 @@
-const CACHE_NAME = 'retris-f352b57';
+const CACHE_NAME = 'retris-a127871';
 const ASSETS = [
   '/',
   '/index.html',
