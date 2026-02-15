@@ -1512,7 +1512,7 @@ document.getElementById('btnSelect').addEventListener('contextmenu', (e) => e.pr
     let touchStartTime = 0;
     let swipeHandled = false;
 
-    const SWIPE_THRESHOLD = 30;   // min px to count as swipe
+    const SWIPE_THRESHOLD = 20;   // min px to count as swipe
     const TAP_THRESHOLD = 15;     // max px movement for a tap
     const SWIPE_DOWN_THRESHOLD = 50; // longer threshold for hard drop
 
@@ -1538,14 +1538,16 @@ document.getElementById('btnSelect').addEventListener('contextmenu', (e) => e.pr
             if (dx > 0) { moveRight(); } else { moveLeft(); }
             draw();
             touchStartX = e.clientX;  // reset origin so continued drag = more moves
+            touchStartY = e.clientY;  // reset Y to prevent accidental soft drop
             swipeHandled = true;
         }
-        // Downward swipe for soft drop
-        if (dy > SWIPE_THRESHOLD && dy > Math.abs(dx)) {
+        // Downward swipe for soft drop (only when clearly vertical, not during lateral moves)
+        else if (dy > SWIPE_THRESHOLD && dy > Math.abs(dx) * 2) {
             if (moveDown()) { score += 1; updateDisplay(); }
             lastDrop = performance.now();
             draw();
             touchStartY = e.clientY;
+            touchStartX = e.clientX;
             swipeHandled = true;
         }
     });
