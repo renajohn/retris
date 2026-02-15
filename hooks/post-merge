@@ -1,6 +1,0 @@
-#!/bin/sh
-# Auto-update CACHE_NAME in sw.js with the short commit hash after each merge
-HASH=$(git rev-parse --short HEAD)
-sed -i '' "s/^const CACHE_NAME = .*/const CACHE_NAME = 'retris-${HASH}';/" sw.js
-git add sw.js
-git commit --amend --no-edit
